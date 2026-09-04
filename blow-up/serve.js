@@ -45,7 +45,7 @@ function resurrect() {
     process.exit(1);
   }
   fs.copyFileSync(BACKUP, TARGET);
-  console.log('index.html is back. It remembers nothing.');
+  console.log('index.html is back. Reload the page and the button is armed again.');
 }
 
 const TOMBSTONE = `<!doctype html><meta charset="utf-8">

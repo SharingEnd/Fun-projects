@@ -40,6 +40,10 @@ git restore blow-up/index.html   # or just ask git
 The sandboxed version has a **put it back** button on the gravestone (it clears the
 one `localStorage` key it set).
 
+Reload after restoring and the button is armed again — the page treats its own
+"already detonated" flag as stale the moment it is served over http, because a
+genuinely deleted `index.html` could not have sent you the page you are reading.
+
 ## How it works
 
 - `index.html` — the button, a canvas explosion (debris, embers, shockwave, drifting

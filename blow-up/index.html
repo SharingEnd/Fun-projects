@@ -317,9 +317,11 @@ function aftermath(mode, when){
   const undo = document.getElementById('undo');
   undo.addEventListener('click', function(){
     if (real){
+      try { localStorage.removeItem(KEY); } catch (e) {}
       undo.outerHTML =
-        '<p style="margin-top:26px">Restore it with <code>git restore blow-up/index.html</code>' +
-        ' or <code>node serve.js --resurrect</code>.</p>';
+        '<p style="margin-top:26px">Bring it back with <code>node serve.js --resurrect</code>' +
+        ' or <code>git restore blow-up/index.html</code> \u2014 then reload, and the button' +
+        ' is armed again.</p>';
     } else {
       try { localStorage.removeItem(KEY); } catch (e) {}
       location.reload();
@@ -389,15 +391,27 @@ btn.addEventListener('click', function(){
   }, FUSE);
 });
 
-/* was it already blown up in this browser? then it stays blown up. */
+/* Was it already blown up in this browser? Then it stays blown up --
+   unless the file itself came back.
+
+   A real deletion cannot serve this page: if you are reading these bytes
+   over http, index.html exists on disk again, so somebody resurrected it
+   and the stored detonation is stale. Drop it and re-arm. (Under file://
+   there is no server to have deleted anything, so the sandbox crater is
+   the whole point and it persists.) */
 (function(){
   let prev = null;
   try { prev = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
-  if (prev){
-    armed = false;
-    aftermath(prev.mode, prev.at);
-    smoke(innerWidth / 2, innerHeight * 0.62, 14);
+  if (!prev) return;
+
+  if (prev.mode === 'real' && location.protocol !== 'file:'){
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    return;                                   // armed again
   }
+
+  armed = false;
+  aftermath(prev.mode, prev.at);
+  smoke(innerWidth / 2, innerHeight * 0.62, 14);
 })();
 </script>
 </body>
