@@ -1,0 +1,5 @@
+# blow-up keeps a copy of index.html here so you can undo the explosion
+.backup/
+
+node_modules/
+.DS_Store
